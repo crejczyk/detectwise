@@ -1,4 +1,4 @@
-package ai.crushthecompetition.detectwise.model;
+package ai.crushthecompetition.detectwise.keras;
 
 import java.io.IOException;
 
@@ -29,11 +29,7 @@ public class YoloKerasModelImport {
 
 	public static void main(String[] args)
 			throws IOException, UnsupportedKerasConfigurationException, InvalidKerasConfigurationException {
-		String pretrainedModelPath = "bin/yolo.h5";
-		// ComputationGraph network =
-		// KerasModelImport.importKerasModelAndWeights(pretrainedModelPath);
-		// ModelSerializer.writeModel(network, "bin/Yolo_v3.zip", false);
-		// String filename = "tiny-yolo-voc.h5";
+		String pretrainedModelPath = "resources/yolo.h5";
 		ComputationGraph graph = KerasModelImport.importKerasModelAndWeights(pretrainedModelPath, false);
 		INDArray priors = Nd4j.create(priorBoxes);
 
@@ -48,8 +44,7 @@ public class YoloKerasModelImport {
 				.setOutputs("outputs").build();
 
 		System.out.println(model.summary(InputType.convolutional(416, 416, 3)));
-
-		ModelSerializer.writeModel(model, "bin/Yolo_v3.zip", false);
+		ModelSerializer.writeModel(model, "resources/tiny-yolo-voc_dl4j_inference.v2.zip", false);
 	}
 
 }
