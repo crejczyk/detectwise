@@ -15,8 +15,7 @@ mvn clean install exec:java
 
 #####  Download Darknet model cfg and weights from the [official YOLO website](http://pjreddie.com/darknet/yolo/).
 ```
-git clone https://github.com/allanzelener/YAD2K.git or 
-
+git clone https://github.com/allanzelener/YAD2K.git
 ./yad2k.py yolo.cfg yolo.weights model_data/yolo.h5
 run YoloKerasModelImport
 ```
