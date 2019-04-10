@@ -31,6 +31,10 @@ public class VideoDetection {
 			grabber.start();
 			while (!stop) {
 				videoFrame = grabber.grab();
+				 if (videoFrame== null) {
+		                stop();
+		                break;
+		            }
 				v[0] = new OpenCVFrameConverter.ToMat().convert(videoFrame);
 				if (v[0] == null) {
 					continue;

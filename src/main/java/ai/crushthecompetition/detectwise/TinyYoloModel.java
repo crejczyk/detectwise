@@ -18,6 +18,7 @@ import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.layers.objdetect.DetectedObject;
 import org.deeplearning4j.nn.layers.objdetect.Yolo2OutputLayer;
 import org.deeplearning4j.zoo.model.TinyYOLO;
+import org.deeplearning4j.zoo.model.YOLO2;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ public class TinyYoloModel {
     
     private TinyYoloModel() {
         try {
-            preTrained = (ComputationGraph) TinyYOLO.builder().build().initPretrained();
+            preTrained = (ComputationGraph) YOLO2.builder().build().initPretrained();
             prepareLabels();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -51,7 +52,7 @@ public class TinyYoloModel {
         int height = 416; // Height of the video frame
         int gridWidth = 13; // Grid width
         int gridHeight = 13; // Grid Height
-        double detectionThreshold = 0.5; // Detection threshold
+        double detectionThreshold = 0.6; // Detection threshold
 
         Yolo2OutputLayer outputLayer = (Yolo2OutputLayer) preTrained.getOutputLayer(0);
         if (newBoundingBOx) {
@@ -76,9 +77,19 @@ public class TinyYoloModel {
 
 	private void prepareLabels() {
 		if (labels == null) {
-			String s = "aeroplane\n" + "bicycle\n" + "bird\n" + "boat\n" + "bottle\n" + "bus\n" + "car\n" + "cat\n"
-					+ "chair\n" + "cow\n" + "diningtable\n" + "dog\n" + "horse\n" + "motorbike\n" + "person\n"
-					+ "pottedplant\n" + "sheep\n" + "sofa\n" + "train\n" + "tvmonitor";
+			String s = "person\n" + "bicycle\n" + "car\n" + "motorbike\n" + "aeroplane\n" + "bus\n" + "train\n"
+					+ "truck\n" + "boat\n" + "traffic light\n" + "fire hydrant\n" + "stop sign\n" + "parking meter\n"
+					+ "bench\n" + "bird\n" + "cat\n" + "dog\n" + "horse\n" + "sheep\n" + "cow\n" + "elephant\n"
+					+ "bear\n" + "zebra\n" + "giraffe\n" + "backpack\n" + "umbrella\n" + "handbag\n" + "tie\n"
+					+ "suitcase\n" + "frisbee\n" + "skis\n" + "snowboard\n" + "sports ball\n" + "kite\n"
+					+ "baseball bat\n" + "baseball glove\n" + "skateboard\n" + "surfboard\n" + "tennis racket\n"
+					+ "bottle\n" + "wine glass\n" + "cup\n" + "fork\n" + "knife\n" + "spoon\n" + "bowl\n" + "banana\n"
+					+ "apple\n" + "sandwich\n" + "orange\n" + "broccoli\n" + "carrot\n" + "hot dog\n" + "pizza\n"
+					+ "donut\n" + "cake\n" + "chair\n" + "sofa\n" + "pottedplant\n" + "bed\n" + "diningtable\n"
+					+ "toilet\n" + "tvmonitor\n" + "laptop\n" + "mouse\n" + "remote\n" + "keyboard\n" + "cell phone\n"
+					+ "microwave\n" + "oven\n" + "toaster\n" + "sink\n" + "refrigerator\n" + "book\n" + "clock\n"
+					+ "vase\n" + "scissors\n" + "teddy bear\n" + "hair drier\n" + "toothbrush\n";
+			
 			String[] split = s.split("\\n");
 			int i = 0;
 			labels = new HashMap<>();
