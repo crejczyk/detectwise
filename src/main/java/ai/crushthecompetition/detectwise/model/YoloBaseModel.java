@@ -43,7 +43,7 @@ abstract public class YoloBaseModel {
             INDArray indArray = prepareImage(file, width, height);
             INDArray results = preTrained.outputSingle(indArray);
             predictedObjects = outputLayer.getPredictedObjects(results, detectionThreshold);
-            LOGGER.info(String.format("results = " + predictedObjects));
+            LOGGER.info(String.format("results = " + predictedObjects.size()));
             markObjWithBoundingBox(file, gridWidth, gridHeight, imageWidth, imageHeight);
         } else {
         	markObjWithBoundingBox(file, gridWidth, gridHeight, imageWidth, imageHeight);

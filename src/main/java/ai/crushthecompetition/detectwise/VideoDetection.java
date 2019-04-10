@@ -13,9 +13,7 @@ import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ai.crushthecompetition.detectwise.model.TinyYoloModel;
 import ai.crushthecompetition.detectwise.model.YoloBaseModel;
-import ai.crushthecompetition.detectwise.model.YoloModel;
 
 public class VideoDetection {
 
@@ -35,26 +33,29 @@ public class VideoDetection {
 			grabber.start();
 			while (!stop) {
 				videoFrame = grabber.grab();
-				 if (videoFrame== null) {
-		                stop();
-		                break;
-		            }
+				if (videoFrame == null) {
+					stop();
+					break;
+				}
 				v[0] = new OpenCVFrameConverter.ToMat().convert(videoFrame);
 				if (v[0] == null) {
 					continue;
 				}
-				
+
 				if (thread == null) {
 					thread = new Thread(() -> {
 						while (videoFrame != null && !stop) {
 							try {
-								yoloModel.markObjWithBoundingBox(v[0], videoFrame.imageWidth,
-										videoFrame.imageHeight, true, windowName);
+								if (v[0] != null) {
+									yoloModel.markObjWithBoundingBox(v[0], videoFrame.imageWidth,
+											videoFrame.imageHeight, true, windowName);
+								}
 							} catch (java.lang.Exception e) {
 								LOGGER.error(e.getMessage(),e);
 							}
 						}
 					});
+					thread.setDaemon(true);		
 					thread.start();
 				};
 				
@@ -67,6 +68,7 @@ public class VideoDetection {
 					stop();
 					break;
 				}
+				Thread.sleep(60);
 			}
 		}
 	}
