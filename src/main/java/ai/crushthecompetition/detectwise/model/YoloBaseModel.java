@@ -126,9 +126,10 @@ abstract public class YoloBaseModel {
         int y1 = (int) Math.round(h * xy1[1] / gridHeight);
         int x2 = (int) Math.round(w * xy2[0] / gridWidth);
         int y2 = (int) Math.round(h * xy2[1] / gridHeight);
-        rectangle(file, new Point(x1, y1), new Point(x2, y2), Scalar.BLUE);
-        putText(file, labels.get(predictedClass), new Point(x1 + 2, y2 - 2), FONT_HERSHEY_DUPLEX, 1, Scalar.MAGENTA);
-        putText(file, String.valueOf(obj.getConfidence()), new Point(x1 + 2, y2 + 20), FONT_HERSHEY_DUPLEX, 0.5, Scalar.WHITE);
-    }
+		rectangle(file, new Point(x1, y1), new Point(x2, y2), Scalar.BLUE);
+		putText(file, labels.get(predictedClass), new Point(x1 + 2, y2 - 2), FONT_HERSHEY_DUPLEX, 1, Scalar.MAGENTA);
+		putText(file, String.valueOf(String.format("%.0f%%", obj.getConfidence() * 100)), new Point(x1 + 2, y2 + 20),
+				FONT_HERSHEY_DUPLEX, 0.5, Scalar.WHITE);
+	}
 
 }
