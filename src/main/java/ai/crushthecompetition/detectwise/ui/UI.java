@@ -18,6 +18,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import ai.crushthecompetition.detectwise.VideoDetection;
+import ai.crushthecompetition.detectwise.model.YoloBaseModel;
+import ai.crushthecompetition.detectwise.model.YoloModel;
 
 public class UI {
 
@@ -29,7 +31,7 @@ public class UI {
     private VideoDetection videoDetection;
     private ProgressBar progressBar;
 
-    public void initUI() throws Exception {
+    public void initUI(YoloBaseModel yoloModel) throws Exception {
 
         mainFrame = createMainFrame();
         mainPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -48,7 +50,7 @@ public class UI {
             Executors.newCachedThreadPool().submit(() -> {
                 try {
                 	videoDetection = new VideoDetection();
-                	videoDetection.startRealTimeVideoDetection(selectedFile.getAbsolutePath());
+                	videoDetection.startRealTimeVideoDetection(selectedFile.getAbsolutePath(), yoloModel);
                 } catch (Exception e1) {
                     throw new RuntimeException(e1);
                 } finally {

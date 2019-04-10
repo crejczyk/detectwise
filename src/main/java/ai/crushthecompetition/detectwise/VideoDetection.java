@@ -13,6 +13,10 @@ import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ai.crushthecompetition.detectwise.model.TinyYoloModel;
+import ai.crushthecompetition.detectwise.model.YoloBaseModel;
+import ai.crushthecompetition.detectwise.model.YoloModel;
+
 public class VideoDetection {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(VideoDetection.class);
@@ -25,7 +29,7 @@ public class VideoDetection {
 	private volatile boolean stop = false;
 	private String windowName;
 
-	public void startRealTimeVideoDetection(String videoFileName) throws java.lang.Exception {
+	public void startRealTimeVideoDetection(String videoFileName, YoloBaseModel yoloModel) throws java.lang.Exception {
 		try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoFileName)) {
 			windowName =  DETECT_WISE + ThreadLocalRandom.current().nextInt();
 			grabber.start();
@@ -44,7 +48,7 @@ public class VideoDetection {
 					thread = new Thread(() -> {
 						while (videoFrame != null && !stop) {
 							try {
-								TinyYoloModel.getINSTANCE().markObjWithBoundingBox(v[0], videoFrame.imageWidth,
+								yoloModel.markObjWithBoundingBox(v[0], videoFrame.imageWidth,
 										videoFrame.imageHeight, true, windowName);
 							} catch (java.lang.Exception e) {
 								LOGGER.error(e.getMessage(),e);
@@ -54,7 +58,7 @@ public class VideoDetection {
 					thread.start();
 				};
 				
-				TinyYoloModel.getINSTANCE().markObjWithBoundingBox(v[0], videoFrame.imageWidth,
+				yoloModel.markObjWithBoundingBox(v[0], videoFrame.imageWidth,
 						videoFrame.imageHeight, false, windowName);
 				imshow(windowName, v[0]);
 

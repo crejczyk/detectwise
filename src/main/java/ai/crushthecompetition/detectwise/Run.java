@@ -4,6 +4,7 @@ import java.util.concurrent.Executors;
 
 import javax.swing.JFrame;
 
+import ai.crushthecompetition.detectwise.model.YoloModel;
 import ai.crushthecompetition.detectwise.ui.ProgressBar;
 import ai.crushthecompetition.detectwise.ui.UI;
 
@@ -17,8 +18,8 @@ public class Run {
         UI ui = new UI();
         Executors.newCachedThreadPool().submit(()->{
             try {
-                TinyYoloModel.getINSTANCE();
-                ui.initUI();
+                YoloModel yoloModel = YoloModel.getINSTANCE();
+                ui.initUI(yoloModel);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             } finally {

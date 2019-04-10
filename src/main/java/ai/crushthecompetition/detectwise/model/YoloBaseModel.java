@@ -1,4 +1,5 @@
-package ai.crushthecompetition.detectwise;
+package ai.crushthecompetition.detectwise.model;
+
 import static org.bytedeco.javacpp.opencv_core.FONT_HERSHEY_DUPLEX;
 import static org.bytedeco.javacpp.opencv_highgui.imshow;
 import static org.bytedeco.javacpp.opencv_imgproc.putText;
@@ -17,42 +18,25 @@ import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.layers.objdetect.DetectedObject;
 import org.deeplearning4j.nn.layers.objdetect.Yolo2OutputLayer;
-import org.deeplearning4j.zoo.model.TinyYOLO;
-import org.deeplearning4j.zoo.model.YOLO2;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TinyYoloModel {
+abstract public class YoloBaseModel {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TinyYoloModel.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(YoloBaseModel.class);
 	
-	private static final TinyYoloModel INSTANCE = new TinyYoloModel();
-
-    private ComputationGraph preTrained;
-    private List<DetectedObject> predictedObjects;
-    private HashMap<Integer, String> labels;
-
-    public static TinyYoloModel getINSTANCE() {
-        return INSTANCE;
-    }
-    
-    private TinyYoloModel() {
-        try {
-            preTrained = (ComputationGraph) YOLO2.builder().build().initPretrained();
-            prepareLabels();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    protected ComputationGraph preTrained;
+    protected List<DetectedObject> predictedObjects;
+    protected HashMap<Integer, String> labels;
 
     public void markObjWithBoundingBox(Mat file, int imageWidth, int imageHeight, boolean newBoundingBOx,String winName) throws Exception {
         int width = 416; // Width of the video frame 
         int height = 416; // Height of the video frame
         int gridWidth = 13; // Grid width
         int gridHeight = 13; // Grid Height
-        double detectionThreshold = 0.6; // Detection threshold
+        double detectionThreshold = 0.5; // Detection threshold
 
         Yolo2OutputLayer outputLayer = (Yolo2OutputLayer) preTrained.getOutputLayer(0);
         if (newBoundingBOx) {
@@ -75,21 +59,9 @@ public class TinyYoloModel {
         return indArray;
     }
 
-	private void prepareLabels() {
+	void prepareLabels() {
 		if (labels == null) {
-			String s = "person\n" + "bicycle\n" + "car\n" + "motorbike\n" + "aeroplane\n" + "bus\n" + "train\n"
-					+ "truck\n" + "boat\n" + "traffic light\n" + "fire hydrant\n" + "stop sign\n" + "parking meter\n"
-					+ "bench\n" + "bird\n" + "cat\n" + "dog\n" + "horse\n" + "sheep\n" + "cow\n" + "elephant\n"
-					+ "bear\n" + "zebra\n" + "giraffe\n" + "backpack\n" + "umbrella\n" + "handbag\n" + "tie\n"
-					+ "suitcase\n" + "frisbee\n" + "skis\n" + "snowboard\n" + "sports ball\n" + "kite\n"
-					+ "baseball bat\n" + "baseball glove\n" + "skateboard\n" + "surfboard\n" + "tennis racket\n"
-					+ "bottle\n" + "wine glass\n" + "cup\n" + "fork\n" + "knife\n" + "spoon\n" + "bowl\n" + "banana\n"
-					+ "apple\n" + "sandwich\n" + "orange\n" + "broccoli\n" + "carrot\n" + "hot dog\n" + "pizza\n"
-					+ "donut\n" + "cake\n" + "chair\n" + "sofa\n" + "pottedplant\n" + "bed\n" + "diningtable\n"
-					+ "toilet\n" + "tvmonitor\n" + "laptop\n" + "mouse\n" + "remote\n" + "keyboard\n" + "cell phone\n"
-					+ "microwave\n" + "oven\n" + "toaster\n" + "sink\n" + "refrigerator\n" + "book\n" + "clock\n"
-					+ "vase\n" + "scissors\n" + "teddy bear\n" + "hair drier\n" + "toothbrush\n";
-			
+			String s = getLabels();
 			String[] split = s.split("\\n");
 			int i = 0;
 			labels = new HashMap<>();
@@ -99,7 +71,9 @@ public class TinyYoloModel {
 		}
 	}
 
-    private void markObjWithBoundingBox(Mat file, int gridWidth, int gridHeight, int w, int h) {
+    protected abstract String getLabels();
+
+	private void markObjWithBoundingBox(Mat file, int gridWidth, int gridHeight, int w, int h) {
         if (predictedObjects == null) {
             return;
         }
